@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A typescript boilerplate to publish modules to npm",
   "main": "out/index.js",
+  "types": "out/index.d.ts",
   "scripts": {
     "test": "jest --ci --silent",
     "build": "tsc",
