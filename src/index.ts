@@ -1,6 +1,6 @@
 import { ParseService } from '@owsas/parse-service';
 
-export interface IParseReactSearchConfig {
+export interface ISearchConfig {
   [key:string]: { 
     search: string|string[];
     include?: string[];
@@ -23,7 +23,7 @@ export interface IGetSearchQueryOptions {
 }
 
 export class ParseTextSearch {
-  static CONFIG: IParseReactSearchConfig = {};
+  static CONFIG: ISearchConfig = {};
   static parse;
   static defaultLimit: number = 10;
 
@@ -46,7 +46,7 @@ export class ParseTextSearch {
         },
       };
    */
-  static configure(keyValues: IParseReactSearchConfig) {
+  static configure(keyValues: ISearchConfig) {
     ParseTextSearch.CONFIG = keyValues;
   }
 
