@@ -12,7 +12,7 @@ Parse.initialize(process.env.APP_ID, process.env.JS_KEY);
 ParseTextSearch.parse = Parse;
 const CONFIGURATION: ISearchConfig = {
   _User: {
-    search: ['name', 'email'],
+    search: 'name,email',
     select: ['name'],
     textKey: 'name',
   },
@@ -20,6 +20,6 @@ const CONFIGURATION: ISearchConfig = {
 
 ParseTextSearch.configure(CONFIGURATION);
 
-ParseTextSearch.getResultsForSearch('serg', {
+ParseTextSearch.getResultsForSearch('juan', {
   scope: ['_User'],
 }).then(console.log).catch(console.error);

@@ -2,7 +2,7 @@ import { ParseService } from '@owsas/parse-service';
 
 export interface ISearchConfig {
   [key:string]: { 
-    search: string|string[];
+    search: string;
     include?: string[];
     select?: string[];
     imgKey?: string;
@@ -56,38 +56,35 @@ export class ParseTextSearch {
    * @param text
    * @param params
    */
-  static async getResultsForSearch(text: string, params: IGetResultsForQueryOptions) {
+  static async getResultsForSearch(
+    text: string, 
+    params: IGetResultsForQueryOptions,
+  ): Parse.Promise<Parse.Object[]> {
     const promises = [];
 
     params.scope.forEach((className) => {
       // run only if the className was configured
       if (ParseTextSearch.CONFIG[className]) {
         const keys = ParseTextSearch.CONFIG[className].search;
-
-        // for string types
-        if (typeof keys === 'string') {
+        keys.split(',').forEach((key: string) => {
           const query = ParseTextSearch.getSearchQuery(
             text,
-            { className, limit: params.limit, key: keys },
+            { className, key, limit: params.limit },
           );
 
           promises.push(ParseService.find(query, params.queryOptions));
-
-        // for array types
-        } else {
-          keys.forEach((key: string) => {
-            const query = ParseTextSearch.getSearchQuery(
-              text,
-              { className, key, limit: params.limit },
-            );
-
-            promises.push(ParseService.find(query, params.queryOptions));
-          });
-        }
+        });
       }
     });
 
-    return Parse.Promise.when(promises);
+    const results: any[] = await ParseTextSearch.parse.Promise.when(promises);
+    /* const realResults = [];
+    results.forEach((r) => {
+      console.log(r);
+      realResults.concat(r);
+    }); */
+
+    return results;
   }
 
   /**
@@ -97,20 +94,19 @@ export class ParseTextSearch {
    * @param options
    */
   static getSearchQuery(text: string, options: IGetSearchQueryOptions): Parse.Query {
-    const keys = ParseTextSearch.CONFIG[options.className].search;
     const { select, include } = ParseTextSearch.CONFIG[options.className];
 
     const query = new ParseTextSearch.parse.Query(options.className);
 
     // run the regexp
-    query.matches(keys, new RegExp(text, 'ig'));
+    query.matches(options.key, new RegExp(text, 'ig'));
     query.limit(options.limit || ParseTextSearch.defaultLimit);
 
     if (include) {
       query.include(include);
     }
 
-    query.select(select || [keys]);
+    query.select(select || [options.key]);
 
     return query;
   }
