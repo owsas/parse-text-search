@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as Parse from 'parse/node';
 import { ParseTextSearch, ISearchConfig } from '../src/index';
+import { ParseService } from '@owsas/parse-service';
 
 dotenv.config();
 
@@ -19,3 +20,6 @@ const CONFIGURATION: ISearchConfig = {
 
 ParseTextSearch.configure(CONFIGURATION);
 
+ParseTextSearch.getResultsForSearch('serg', {
+  scope: ['_User'],
+}).then(console.log).catch(console.error);
