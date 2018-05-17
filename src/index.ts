@@ -2,22 +2,29 @@ import { ParseService } from '@owsas/parse-service';
 
 export interface IParseReactSearchConfig {
   [key:string]: { 
-    search: string|string[], 
-    include?: string[], 
-    select?: string[],
-    imgKey?: string
-  }
+    search: string|string[];
+    include?: string[];
+    select?: string[];
+    imgKey?: string;
+    textKey: string;
+  };
 }
 
-export interface IGetSearchQuery {
-  scope: string[], 
-  queryOptions?: Parse.Query.FindOptions, 
-  limit?: number
+export interface IGetResultsForQueryOptions {
+  scope: string[];
+  limit?: number;
+  queryOptions?: Parse.Query.FindOptions;
 }
 
-export default class ParseTextSearch {
+export interface IGetSearchQueryOptions {
+  className: string; 
+  key: string;
+  limit?: number;
+}
+
+export class ParseTextSearch {
   static CONFIG: IParseReactSearchConfig = {};
-  static Parse;
+  static parse;
   static defaultLimit: number = 10;
 
   /**
@@ -46,10 +53,10 @@ export default class ParseTextSearch {
   /**
    * Gets the results for a text search, in the given scope
    * You MUST configure the class before calling this
-   * @param {string} text
-   * @param {{ scope: string[], queryOptions: Parse.Query.FindOptions, limit: number }} params
+   * @param text
+   * @param params
    */
-  static async getResultsForSearch(text, params) {
+  static async getResultsForSearch(text: string, params: IGetResultsForQueryOptions) {
     const promises = [];
 
     params.scope.forEach((className) => {
@@ -68,10 +75,10 @@ export default class ParseTextSearch {
 
         // for array types
         } else {
-          keys.forEach((key) => {
+          keys.forEach((key: string) => {
             const query = ParseTextSearch.getSearchQuery(
               text,
-              { className, limit: params.limit, key },
+              { className, key, limit: params.limit },
             );
 
             promises.push(ParseService.find(query, params.queryOptions));
@@ -85,14 +92,15 @@ export default class ParseTextSearch {
 
   /**
    * Gets a query for the text, given the options
-   * @param {*} text
-   * @param {{ className: string, limit: number, key: string }} options
+   * Please configure the class before using this
+   * @param text
+   * @param options
    */
-  static getSearchQuery(text, options) {
+  static getSearchQuery(text: string, options: IGetSearchQueryOptions): Parse.Query {
     const keys = ParseTextSearch.CONFIG[options.className].search;
     const { select, include } = ParseTextSearch.CONFIG[options.className];
 
-    const query = new ParseTextSearch.Parse.Query(options.className);
+    const query = new ParseTextSearch.parse.Query(options.className);
 
     // run the regexp
     query.matches(keys, new RegExp(text, 'ig'));
