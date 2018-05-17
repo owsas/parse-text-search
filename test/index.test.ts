@@ -1,5 +1,14 @@
-import { MyModule } from '../src/index';
+import * as Parse from 'parse/node';
+import { ParseTextSearch } from '../src/index';
 
-test('test', () => {
-  expect(true).toBe(true);
+// configure text search
+ParseTextSearch.Parse = Parse;
+ParseTextSearch.configure({
+  _User: {
+    search: ['name', 'email'],
+    select: ['name'],
+    textKey: 'name',
+  },
 });
+
+
