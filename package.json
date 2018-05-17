@@ -8,7 +8,7 @@
     "test": "jest --ci --silent",
     "build": "tsc",
     "watch": "tsc -w",
-    "prepublish": "tsc"
+    "prepublishOnly": "tsc"
   },
   "keywords": [],
   "author": "Juan Camilo Guarín P",
@@ -21,6 +21,7 @@
     "@owsas/parse-service": "^1.0.1",
     "@types/jest": "^21.1.4",
     "@types/parse": "^1.11.0",
+    "dotenv": "^5.0.1",
     "jest": "^21.2.1",
     "parse": "^1.11.1",
     "ts-jest": "^21.1.3",
