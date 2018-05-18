@@ -5,7 +5,7 @@ import { ParseTextSearch, ISearchConfig } from '../src/index';
 ParseTextSearch.parse = Parse;
 const CONFIGURATION: ISearchConfig = {
   _User: {
-    search: ['name', 'email'],
+    search: 'name,email',
     select: ['name'],
     textKey: 'name',
   },

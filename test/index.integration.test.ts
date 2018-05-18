@@ -1,9 +1,10 @@
 import * as dotenv from 'dotenv';
+dotenv.config();
+
 import * as Parse from 'parse/node';
 import { ParseTextSearch, ISearchConfig } from '../src/index';
 import { ParseService } from '@owsas/parse-service';
 
-dotenv.config();
 
 (Parse as any).serverURL = process.env.SERVER_URL;
 Parse.initialize(process.env.APP_ID, process.env.JS_KEY);
@@ -20,6 +21,12 @@ const CONFIGURATION: ISearchConfig = {
 
 ParseTextSearch.configure(CONFIGURATION);
 
-ParseTextSearch.getResultsForSearch('juan', {
-  scope: ['_User'],
-}).then(console.log).catch(console.error);
+test('should be able to find the results', async () => {
+  const results: Parse.Object[] = await ParseTextSearch.search('juan', {
+    scope: ['_User'],
+  });
+
+  expect(results.length).toBeGreaterThan(0);
+  expect(results[0] instanceof Parse.Object).toBe(true);
+});
+

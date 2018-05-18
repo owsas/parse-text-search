@@ -56,35 +56,45 @@ export class ParseTextSearch {
    * @param text
    * @param params
    */
-  static async getResultsForSearch(
+  static async search(
     text: string, 
     params: IGetResultsForQueryOptions,
-  ): Parse.Promise<Parse.Object[]> {
+  ): Promise<Parse.Object[]> {
     const promises = [];
 
     params.scope.forEach((className) => {
       // run only if the className was configured
       if (ParseTextSearch.CONFIG[className]) {
         const keys = ParseTextSearch.CONFIG[className].search;
+        const { select } = ParseTextSearch.CONFIG[className];
+        const queries: Parse.Query[] = [];
+
         keys.split(',').forEach((key: string) => {
           const query = ParseTextSearch.getSearchQuery(
             text,
             { className, key, limit: params.limit },
           );
-
-          promises.push(ParseService.find(query, params.queryOptions));
+          queries.push(query);
         });
+
+        // redo the select
+        const orQuery: Parse.Query = ParseTextSearch.parse.Query.or(...queries);
+        if (select) {
+          orQuery.select(...select);
+        }
+
+        // find the results
+        promises.push(ParseService.find(orQuery, params.queryOptions));
       }
     });
 
     const results: any[] = await ParseTextSearch.parse.Promise.when(promises);
-    /* const realResults = [];
+    let realResults = [];
     results.forEach((r) => {
-      console.log(r);
-      realResults.concat(r);
-    }); */
+      realResults = realResults.concat(r);
+    });
 
-    return results;
+    return realResults;
   }
 
   /**
@@ -94,6 +104,10 @@ export class ParseTextSearch {
    * @param options
    */
   static getSearchQuery(text: string, options: IGetSearchQueryOptions): Parse.Query {
+    if (!ParseTextSearch.CONFIG[options.className]) {
+      throw new Error(`Please configure ${options.className} before`);
+    }
+
     const { select, include } = ParseTextSearch.CONFIG[options.className];
 
     const query = new ParseTextSearch.parse.Query(options.className);
