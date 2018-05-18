@@ -2,7 +2,7 @@ import { ParseService } from '@owsas/parse-service';
 import { ParseQueryGen, IParams } from 'parse-query-gen';
 
 export interface ISearchConfig {
-  [key:string]: { 
+  [className:string]: { 
     search: string;
     include?: string[];
     select?: string[];
@@ -17,7 +17,7 @@ export interface IGetResultsForQueryOptions {
   queryOptions?: Parse.Query.FindOptions;
   format?: boolean;
   filters?: {
-    [key:string]: IParams,
+    [className:string]: IParams,
   };
 }
 
