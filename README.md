@@ -1,4 +1,5 @@
 # Parse Text Search
+![](https://travis-ci.org/owsas/parse-text-search.svg?branch=master)
 
 A Javascript API with utils for searching on your Parse server
 
