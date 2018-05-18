@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import * as Parse from 'parse/node';
-import { ParseTextSearch, ISearchConfig } from '../src/index';
+import { ParseTextSearch, ISearchConfig, IResult } from '../src/index';
 import { ParseService } from '@owsas/parse-service';
 
 
@@ -22,7 +22,7 @@ const CONFIGURATION: ISearchConfig = {
 ParseTextSearch.configure(CONFIGURATION);
 
 test('should be able to find the results', async () => {
-  const results: Parse.Object[] = await ParseTextSearch.search('juan', {
+  const results: Parse.Object[]|IResult[] = await ParseTextSearch.search('juan', {
     scope: ['_User'],
   });
 

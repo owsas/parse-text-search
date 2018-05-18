@@ -14,6 +14,14 @@ export interface IGetResultsForQueryOptions {
   scope: string[];
   limit?: number;
   queryOptions?: Parse.Query.FindOptions;
+  format?: boolean;
+}
+
+export interface IResult {
+  text: string;
+  img?: string;
+  objectId: string;
+  className: string;
 }
 
 export interface IGetSearchQueryOptions {
@@ -59,7 +67,7 @@ export class ParseTextSearch {
   static async search(
     text: string, 
     params: IGetResultsForQueryOptions,
-  ): Promise<Parse.Object[]> {
+  ): Promise<Parse.Object[]|IResult[]> {
     const promises = [];
 
     params.scope.forEach((className) => {
@@ -89,10 +97,24 @@ export class ParseTextSearch {
     });
 
     const results: any[] = await ParseTextSearch.parse.Promise.when(promises);
-    let realResults = [];
+    let realResults: Parse.Object[] = [];
     results.forEach((r) => {
       realResults = realResults.concat(r);
     });
+
+    if (params.format) {
+      const formatted: IResult[] = realResults.map((result) => {
+        const config = ParseTextSearch.CONFIG[result.className];
+        return config && {
+          objectId: result.id,
+          className: result.className,
+          text: result.get(config.textKey),
+          img: config.imgKey && result.get(config.imgKey),
+        };
+      }).filter(Boolean);
+
+      return formatted;
+    }
 
     return realResults;
   }
