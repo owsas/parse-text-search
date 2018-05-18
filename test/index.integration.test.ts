@@ -14,7 +14,7 @@ ParseTextSearch.parse = Parse;
 const CONFIGURATION: ISearchConfig = {
   _User: {
     search: 'name,email',
-    select: ['name'],
+    select: ['name', 'username'],
     textKey: 'name',
   },
 };
@@ -24,6 +24,22 @@ ParseTextSearch.configure(CONFIGURATION);
 test('should be able to find the results', async () => {
   const results: Parse.Object[]|IResult[] = await ParseTextSearch.search('juan', {
     scope: ['_User'],
+  });
+
+  expect(results.length).toBeGreaterThan(0);
+  expect(results[0] instanceof Parse.Object).toBe(true);
+});
+
+test('should be able to find the results with additional filters', async () => {
+  const results: Parse.Object[]|IResult[] = await ParseTextSearch.search('juan', {
+    scope: ['_User'],
+    filters: {
+      _User: {
+        matches: {
+          email: 'gmail',
+        },
+      },
+    },
   });
 
   expect(results.length).toBeGreaterThan(0);

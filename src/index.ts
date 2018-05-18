@@ -1,4 +1,5 @@
 import { ParseService } from '@owsas/parse-service';
+import { ParseQueryGen, IParams } from 'parse-query-gen';
 
 export interface ISearchConfig {
   [key:string]: { 
@@ -15,6 +16,9 @@ export interface IGetResultsForQueryOptions {
   limit?: number;
   queryOptions?: Parse.Query.FindOptions;
   format?: boolean;
+  filters?: {
+    [key:string]: IParams,
+  };
 }
 
 export interface IResult {
@@ -89,6 +93,14 @@ export class ParseTextSearch {
         const orQuery: Parse.Query = ParseTextSearch.parse.Query.or(...queries);
         if (select) {
           orQuery.select(...select);
+        }
+
+        // run the filters
+        if (params.filters && params.filters[className]) {
+          ParseQueryGen.gen({
+            query: orQuery,
+            ...params.filters[className],
+          });
         }
 
         // find the results

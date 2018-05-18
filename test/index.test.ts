@@ -56,6 +56,30 @@ describe('#search', () => {
     expect(results.length).toBeGreaterThan(0);
     expect((<IResult>results[0]).text).toEqual('juan camilo');
   });
+
+  test('should allow filters and return the right results', async () => {
+    const mockObj = new Parse.Object('_User');
+    mockObj.set('name', 'juan camilo');
+    mockObj.set('email', 'juan@hotmail.com');
+
+    const mock = jest.spyOn(ParseService, 'find');
+    mock.mockImplementation(async () => mockObj);
+
+    const results = await ParseTextSearch.search('juan', {
+      scope: ['_User', 'Country', 'City'],
+      format: true,
+      filters: {
+        _User: {
+          matches: {
+            email: 'hotmail',
+          },
+        },
+      },
+    });
+
+    expect(results.length).toBeGreaterThan(0);
+    expect((<IResult>results[0]).text).toEqual('juan camilo');
+  });
 });
 
 describe('#getSearchQuery', () => {
