@@ -2,7 +2,45 @@
 
 A Javascript API with utils for searching on your Parse server
 
-WORK IN PROGRESS
+## Usage
+
+```ts
+import { ParseService } from '@owsas/parse-service';
+
+// configure text search
+ParseTextSearch.parse = Parse;
+const CONFIGURATION: ISearchConfig = {
+  _User: {
+    search: 'name,email',
+    select: ['name'],
+    textKey: 'name',
+  },
+};
+ParseTextSearch.configure(CONFIGURATION);
+
+const results = await ParseTextSearch.search('juan', {
+  scope: ['_User'],
+});
+console.log(results[0]) // a Parse.Object
+
+// or you can get IResult types using format: true
+const results = await ParseTextSearch.search('juan', {
+  scope: ['_User'],
+  format: true,
+});
+
+console.log(results[0]) // an IResult
+```
+
+The IResult interface is the following:
+```ts
+export interface IResult {
+  text: string;
+  img?: string;
+  objectId: string;
+  className: string;
+}
+```
 
 ## Dev Mode
 
