@@ -2,10 +2,37 @@
 
 A Javascript API with utils for searching on your Parse server
 
+## Content
+<!-- TOC -->
+
+- [Parse Text Search](#parse-text-search)
+  - [Content](#content)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Advanced search](#advanced-search)
+  - [Dev Mode](#dev-mode)
+  - [Dev Features](#dev-features)
+  - [Credits](#credits)
+  - [License](#license)
+  - [Support us on Patreon](#support-us-on-patreon)
+
+<!-- /TOC -->
+
+## Installation
+
+```
+$> npm install --save @owsas/parse-text-search
+```
+
+Or with Yarn:
+```
+$> yarn add @owsas/parse-text-search
+```
+
 ## Usage
 
 ```ts
-import { ParseService } from '@owsas/parse-service';
+import { ParseTextSearch } from '@owsas/parse-text-search';
 
 // configure text search
 ParseTextSearch.parse = Parse;
